@@ -2,3 +2,6 @@ project_id = "qtidsepeojjmcxgwmxlb"
 
 [functions.chronicler-chat]
 verify_jwt = false
+
+[functions.generate-characters]
+verify_jwt = false

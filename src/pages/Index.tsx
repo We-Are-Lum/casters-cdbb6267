@@ -24,7 +24,7 @@ export default function Index() {
           </p>
 
           <Link
-            to="/dashboard"
+            to="/choose"
             className="inline-flex items-center gap-2 px-8 py-3 rounded-lg font-display text-sm tracking-widest uppercase transition-all gradient-gold text-background font-bold hover:opacity-90 glow-gold"
           >
             Enter
