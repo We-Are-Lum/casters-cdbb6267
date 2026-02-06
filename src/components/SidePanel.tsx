@@ -14,18 +14,18 @@ export default function SidePanel() {
   const activeQuests = MOCK_QUESTS.filter((q) => q.status === "active");
 
   const tabs: { id: Tab; label: string; icon: typeof Package }[] = [
-    { id: "quests", label: "Quests", icon: Map },
-    { id: "inventory", label: "Inventory", icon: Package },
-    { id: "world", label: "World", icon: Map },
+    { id: "quests", label: "QUESTS", icon: Map },
+    { id: "inventory", label: "INVENTORY", icon: Package },
+    { id: "world", label: "WORLD", icon: Map },
   ];
 
   return (
     <>
-      {/* Toggle button (visible when collapsed) */}
+      {/* Toggle button */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-secondary border border-border border-r-0 rounded-l-lg p-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-background border border-border border-r-0 p-3 text-muted-foreground hover:text-foreground transition-colors shadow-sm"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -33,48 +33,49 @@ export default function SidePanel() {
 
       {/* Panel */}
       <div
-        className={`fixed right-0 top-0 h-full z-40 bg-background border-l border-border transition-all duration-300 ${
-          open ? "w-80 lg:w-96" : "w-0"
-        } overflow-hidden`}
+        className={`fixed right-0 top-0 h-full z-40 bg-background border-l border-border transition-transform duration-300 ease-in-out w-80 lg:w-96 shadow-xl ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        <div className="flex flex-col h-full w-80 lg:w-96">
+        <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <div className="flex gap-1">
-              {tabs.map(({ id, label, icon: Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => setTab(id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-display tracking-wider transition-all ${
-                    tab === id
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </button>
-              ))}
-            </div>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
+            <span className="font-display text-xs font-medium tracking-[0.2em] uppercase">
+              {tabs.find(t => t.id === tab)?.label}
+            </span>
             <button
               onClick={() => setOpen(false)}
-              className="text-muted-foreground hover:text-foreground p-1"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
+          {/* Tabs */}
+          <div className="flex border-b border-border/40">
+            {tabs.map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setTab(id)}
+                className={`flex-1 py-3 text-[10px] font-medium tracking-widest uppercase transition-colors ${
+                  tab === id
+                    ? "text-foreground border-b-2 border-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {tab === "quests" && (
-              <>
-                <h3 className="font-display text-xs tracking-[0.3em] text-primary uppercase">
-                  Active Quests
-                </h3>
-                {activeQuests.map((quest) => (
+              <div className="space-y-4">
+                 {activeQuests.map((quest) => (
                   <QuestCard key={quest.id} quest={quest} />
                 ))}
-              </>
+              </div>
             )}
             {tab === "inventory" && <InventoryPanel character={MOCK_CHARACTER} />}
             {tab === "world" && <WorldStatus />}

@@ -1,42 +1,43 @@
 import { Link } from "react-router-dom";
-import { ScrollText, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import heroImage from "@/assets/hero-chronicler.jpg";
 
 export default function Index() {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="relative h-screen flex flex-col items-center justify-center">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="w-full h-full object-cover opacity-40" />
-          <div className="absolute inset-0 gradient-hero" />
-          <div className="absolute inset-0 bg-background/40" />
-        </div>
+    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col items-center justify-center p-6">
+      
+      {/* Background with simple overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={heroImage} 
+          alt="The Chronicler" 
+          className="w-full h-full object-cover opacity-20 grayscale" 
+        />
+        <div className="absolute inset-0 bg-background/80" />
+      </div>
 
-        <div className="relative z-10 text-center px-6 max-w-2xl mx-auto" style={{ animation: "fade-in-up 1s ease-out" }}>
-          <ScrollText className="h-8 w-8 text-primary animate-float mx-auto mb-6" />
-
-          <h1 className="font-display text-5xl md:text-7xl font-bold text-foreground tracking-wider mb-4 glow-text-gold">
+      <div className="relative z-10 max-w-2xl w-full space-y-12 text-center animate-slide-up">
+        <div className="space-y-4">
+          <h1 className="font-display text-6xl md:text-8xl font-medium tracking-tight text-foreground">
             CASTERS
           </h1>
-
-          <p className="text-lg text-secondary-foreground mb-8 italic">
+          <p className="text-xl text-muted-foreground font-light tracking-wide">
             Speak to the Chronicler. Shape the story.
           </p>
-
-          <Link
-            to="/choose"
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-lg font-display text-sm tracking-widest uppercase transition-all gradient-gold text-background font-bold hover:opacity-90 glow-gold"
-          >
-            Enter
-            <ChevronRight className="h-4 w-4" />
-          </Link>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 max-w-xl text-center px-6">
-          <blockquote className="text-sm italic text-secondary-foreground border-l-2 border-gold/40 pl-4">
+        <div className="flex flex-col items-center gap-6">
+          <Link
+            to="/choose"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 text-sm font-medium tracking-widest uppercase text-foreground border border-foreground/20 hover:border-foreground transition-all duration-300 bg-background/50 backdrop-blur-sm"
+          >
+            Enter the Chronicle
+            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+          
+          <p className="text-xs text-muted-foreground/60 max-w-xs mx-auto leading-relaxed">
             "The world remembers what you say in public."
-            <footer className="mt-1 text-xs text-primary font-display tracking-wider not-italic">— The Chronicler</footer>
-          </blockquote>
+          </p>
         </div>
       </div>
     </div>
