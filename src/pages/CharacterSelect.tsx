@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, RefreshCw, ArrowRight } from "lucide-react";
 import { CHARACTER_IMAGES } from "@/lib/characterImages";
-import { getFactionBgColor, getFactionColor } from "@/lib/mockData";
+import { supabase } from "@/integrations/supabase/client";
 import type { Faction } from "@/lib/mockData";
 
 interface CharacterProfile {
@@ -19,6 +19,7 @@ export default function CharacterSelect() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const fetchCharacters = async () => {
     setLoading(true);
@@ -49,9 +50,29 @@ export default function CharacterSelect() {
     fetchCharacters();
   }, []);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selected === null) return;
-    navigate("/dashboard");
+    const char = characters[selected];
+    setSaving(true);
+    try {
+      const { data, error: insertError } = await supabase
+        .from("characters")
+        .insert({
+          name: char.name,
+          faction: char.faction,
+          backstory: char.backstory,
+          portrait_index: selected,
+          is_claimed: true,
+        })
+        .select("id")
+        .single();
+
+      if (insertError) throw insertError;
+      navigate(`/dashboard?character=${data.id}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save character");
+      setSaving(false);
+    }
   };
 
   return (
@@ -145,10 +166,10 @@ export default function CharacterSelect() {
             
             <button
               onClick={handleConfirm}
-              className="whitespace-nowrap bg-foreground text-background px-8 py-3 text-xs font-medium uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              disabled={saving}
+              className="whitespace-nowrap bg-foreground text-background px-8 py-3 text-xs font-medium uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              Confirm
-              <ArrowRight className="h-3 w-3" />
+              {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <>Confirm <ArrowRight className="h-3 w-3" /></>}
             </button>
           </div>
         </div>
