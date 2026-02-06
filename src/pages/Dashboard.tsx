@@ -1,52 +1,54 @@
-import { MOCK_QUESTS, MOCK_CHRONICLE, MOCK_CHARACTER } from "@/lib/mockData";
-import Navbar from "@/components/Navbar";
-import QuestCard from "@/components/QuestCard";
-import ChronicleEntryCard from "@/components/ChronicleEntry";
-import CharacterPanel from "@/components/CharacterPanel";
-import InventoryPanel from "@/components/InventoryPanel";
-import WorldStatus from "@/components/WorldStatus";
+import { Link } from "react-router-dom";
+import { ScrollText, Package, Map } from "lucide-react";
+import ChroniclerChat from "@/components/ChroniclerChat";
+import SidePanel from "@/components/SidePanel";
+import { MOCK_CHARACTER } from "@/lib/mockData";
+import { getFactionColor } from "@/lib/mockData";
 
 export default function Dashboard() {
-  const activeQuests = MOCK_QUESTS.filter((q) => q.status === "active");
-
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="container py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left sidebar - Character & Inventory */}
-          <div className="lg:col-span-3 space-y-6">
-            <CharacterPanel character={MOCK_CHARACTER} />
-            <InventoryPanel character={MOCK_CHARACTER} />
+    <div className="h-screen bg-background flex flex-col">
+      {/* Minimal top bar */}
+      <nav className="flex items-center justify-between px-4 py-2 border-b border-border bg-background/80 backdrop-blur-xl">
+        <div className="flex items-center gap-2">
+          <ScrollText className="h-5 w-5 text-primary" />
+          <span className="font-display text-sm font-bold text-primary tracking-widest">CASTERS</span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-3 text-xs font-mono">
+            <span className="text-primary font-semibold">{MOCK_CHARACTER.lum} $LUM</span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-accent font-semibold">{MOCK_CHARACTER.fgld} $FGLD</span>
           </div>
 
-          {/* Center - Active Quests */}
-          <div className="lg:col-span-5 space-y-6">
-            <div>
-              <h2 className="font-display text-xs tracking-[0.3em] text-primary uppercase mb-4">Active Quests</h2>
-              <div className="space-y-4">
-                {activeQuests.map((quest) => (
-                  <QuestCard key={quest.id} quest={quest} />
-                ))}
-              </div>
-            </div>
-          </div>
+          <Link
+            to="/inventory"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1.5"
+            title="Inventory"
+          >
+            <Package className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/world"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1.5"
+            title="World"
+          >
+            <Map className="h-4 w-4" />
+          </Link>
 
-          {/* Right sidebar - Chronicle & World */}
-          <div className="lg:col-span-4 space-y-6">
-            <WorldStatus />
-
-            <div className="gradient-card rounded-lg border border-border p-5">
-              <h3 className="font-display text-xs tracking-[0.3em] text-primary uppercase mb-5">The Chronicle</h3>
-              <div className="space-y-0">
-                {MOCK_CHRONICLE.map((entry) => (
-                  <ChronicleEntryCard key={entry.id} entry={entry} />
-                ))}
-              </div>
-            </div>
+          <div className="h-7 w-7 rounded-full bg-faction-azure/30 border border-faction-azure/50 flex items-center justify-center">
+            <span className="text-[10px] font-display font-bold text-faction-azure">AV</span>
           </div>
         </div>
-      </main>
+      </nav>
+
+      {/* Chat takes the rest */}
+      <div className="flex-1 overflow-hidden">
+        <ChroniclerChat />
+      </div>
+
+      <SidePanel />
     </div>
   );
 }
