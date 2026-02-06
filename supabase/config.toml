@@ -1,1 +1,4 @@
 project_id = "qtidsepeojjmcxgwmxlb"
+
+[functions.chronicler-chat]
+verify_jwt = false
