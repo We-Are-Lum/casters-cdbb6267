@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ScrollText, Send, Trash2 } from "lucide-react";
+import { Send, Trash2 } from "lucide-react";
 import { useChroniclerChat } from "@/hooks/useChroniclerChat";
 
 export default function ChroniclerChat() {
@@ -28,17 +28,16 @@ export default function ChroniclerChat() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-        <div className="flex items-center gap-2">
-          <ScrollText className="h-5 w-5 text-primary" />
-          <span className="font-display text-sm tracking-widest text-primary uppercase">The Chronicler</span>
-        </div>
+    <div className="flex flex-col h-full bg-background">
+      {/* Minimal Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
+        <span className="font-display text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
+          The Chronicler
+        </span>
         {messages.length > 0 && (
           <button
             onClick={clearMessages}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1"
+            className="text-muted-foreground/50 hover:text-foreground transition-colors"
             title="Clear conversation"
           >
             <Trash2 className="h-4 w-4" />
@@ -46,18 +45,14 @@ export default function ChroniclerChat() {
         )}
       </div>
 
-      {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      {/* Messages Area */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-8 space-y-8">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center px-6">
-            <ScrollText className="h-10 w-10 text-primary/40 mb-4 animate-float" />
-            <p className="font-display text-sm text-muted-foreground tracking-wider mb-2">
-              The Chronicler awaits
+          <div className="flex flex-col items-center justify-center h-full text-center px-6 opacity-60">
+            <p className="font-display text-sm text-muted-foreground tracking-widest mb-8">
+              THE CHRONICLE AWAITS
             </p>
-            <p className="text-xs text-muted-foreground/70 italic max-w-xs">
-              Ask about the world, your quests, the factions, or declare your intent. Every word shapes the story.
-            </p>
-            <div className="flex flex-wrap gap-2 mt-6 justify-center">
+            <div className="flex flex-wrap gap-3 justify-center max-w-md">
               {[
                 "What quests are active?",
                 "Tell me about the factions",
@@ -66,7 +61,7 @@ export default function ChroniclerChat() {
                 <button
                   key={q}
                   onClick={() => send(q)}
-                  className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary-foreground hover:border-primary/50 hover:text-primary transition-all"
+                  className="text-xs px-4 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all duration-300 bg-background"
                 >
                   {q}
                 </button>
@@ -81,17 +76,12 @@ export default function ChroniclerChat() {
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[85%] rounded-lg px-4 py-2.5 text-sm leading-relaxed ${
+              className={`max-w-[80%] md:max-w-[60%] text-sm leading-relaxed ${
                 msg.role === "user"
-                  ? "bg-primary/15 text-foreground border border-primary/20"
-                  : "gradient-card border border-border text-secondary-foreground italic"
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground font-serif italic text-base"
               }`}
             >
-              {msg.role === "assistant" && (
-                <span className="text-xs font-display tracking-wider text-primary block mb-1 not-italic">
-                  The Chronicler
-                </span>
-              )}
               <span className="whitespace-pre-wrap">{msg.content}</span>
             </div>
           </div>
@@ -99,19 +89,16 @@ export default function ChroniclerChat() {
 
         {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
           <div className="flex justify-start">
-            <div className="gradient-card border border-border rounded-lg px-4 py-2.5">
-              <span className="text-xs font-display tracking-wider text-primary block mb-1">
-                The Chronicler
-              </span>
-              <span className="text-sm text-muted-foreground animate-pulse-gold">The quill moves...</span>
-            </div>
+            <span className="text-xs text-muted-foreground/40 font-display tracking-widest animate-pulse">
+              WRITING...
+            </span>
           </div>
         )}
       </div>
 
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="border-t border-border p-3">
-        <div className="flex items-end gap-2">
+      {/* Input Area */}
+      <form onSubmit={handleSubmit} className="p-4 md:p-6 bg-background">
+        <div className="relative max-w-4xl mx-auto">
           <textarea
             ref={inputRef}
             value={input}
@@ -119,12 +106,12 @@ export default function ChroniclerChat() {
             onKeyDown={handleKeyDown}
             placeholder="Speak to the Chronicler..."
             rows={1}
-            className="flex-1 resize-none bg-secondary rounded-lg px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 font-body"
+            className="w-full resize-none bg-transparent border-b border-border/40 py-3 pr-12 text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors font-sans"
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="p-2.5 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors"
           >
             <Send className="h-4 w-4" />
           </button>

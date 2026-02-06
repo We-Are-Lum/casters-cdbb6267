@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ScrollText, Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, ArrowRight } from "lucide-react";
 import { CHARACTER_IMAGES } from "@/lib/characterImages";
-import { getFactionColor, getFactionBgColor } from "@/lib/mockData";
+import { getFactionBgColor, getFactionColor } from "@/lib/mockData";
 import type { Faction } from "@/lib/mockData";
 
 interface CharacterProfile {
@@ -23,6 +23,7 @@ export default function CharacterSelect() {
   const fetchCharacters = async () => {
     setLoading(true);
     setError(null);
+    setSelected(null);
     try {
       const resp = await fetch(GENERATE_URL, {
         method: "POST",
@@ -33,8 +34,7 @@ export default function CharacterSelect() {
         body: JSON.stringify({}),
       });
       if (!resp.ok) {
-        const data = await resp.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to summon characters");
+        throw new Error("Failed to summon characters");
       }
       const data = await resp.json();
       setCharacters(data.characters?.slice(0, 30) || []);
@@ -51,140 +51,107 @@ export default function CharacterSelect() {
 
   const handleConfirm = () => {
     if (selected === null) return;
-    // For now, navigate to dashboard. Later this will persist.
     navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="text-center pt-10 pb-6 px-6">
-        <ScrollText className="h-6 w-6 text-primary mx-auto mb-3" />
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground tracking-wider glow-text-gold mb-2">
-          Choose Your Vessel
-        </h1>
-        <p className="text-sm text-secondary-foreground italic max-w-md mx-auto">
-          The Chronicler has drawn thirty souls from the ether. Each carries a name, a history, and a fate yet unwritten.
-        </p>
-      </div>
+    <div className="min-h-screen bg-background text-foreground p-6 md:p-12">
+      <header className="max-w-7xl mx-auto flex justify-between items-start mb-12">
+        <div>
+          <h1 className="font-display text-3xl font-medium tracking-tight mb-2">
+            CHOOSE YOUR VESSEL
+          </h1>
+          <p className="text-muted-foreground font-light max-w-md text-sm leading-relaxed">
+            The Chronicler has drawn thirty souls from the ether. 
+            Select one to begin your journey.
+          </p>
+        </div>
+        
+        {!loading && !error && (
+          <button
+            onClick={fetchCharacters}
+            className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+          >
+            <RefreshCw className="h-3 w-3" />
+            Reroll All
+          </button>
+        )}
+      </header>
 
       {loading && (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 text-primary animate-spin mb-4" />
-          <p className="text-sm text-muted-foreground font-display tracking-wider">
-            The Chronicler summons your choices...
-          </p>
+        <div className="flex flex-col items-center justify-center h-[50vh]">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mb-4" />
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Summoning...</p>
         </div>
       )}
 
       {error && (
-        <div className="text-center py-20 px-6">
-          <p className="text-sm text-destructive mb-4">*{error}*</p>
-          <button
-            onClick={fetchCharacters}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-foreground text-sm font-display hover:bg-secondary/80 transition-colors"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Try Again
-          </button>
+        <div className="text-center py-20">
+          <p className="text-sm text-destructive mb-4">{error}</p>
+          <button onClick={fetchCharacters} className="underline text-sm">Try Again</button>
         </div>
       )}
 
-      {!loading && !error && characters.length > 0 && (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 md:px-8 max-w-7xl mx-auto">
-            {characters.map((char, i) => {
-              const isSelected = selected === i;
-              const image = CHARACTER_IMAGES[i] || CHARACTER_IMAGES[0];
+      {!loading && !error && (
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
+          {characters.map((char, i) => {
+            const isSelected = selected === i;
+            const image = CHARACTER_IMAGES[i] || CHARACTER_IMAGES[0];
 
-              return (
-                <button
-                  key={i}
-                  onClick={() => setSelected(i)}
-                  className={`group relative rounded-lg overflow-hidden border-2 transition-all text-left ${
-                    isSelected
-                      ? "border-primary glow-gold scale-[1.02]"
-                      : "border-border hover:border-primary/40"
-                  }`}
-                >
-                  {/* Portrait */}
-                  <div className="aspect-[3/4] relative">
-                    <img
-                      src={image}
-                      alt={char.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-
-                    {/* Info overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <span
-                        className={`text-[10px] font-display tracking-wider px-2 py-0.5 rounded-full ${getFactionBgColor(char.faction)} ${getFactionColor(char.faction)} mb-1 inline-block`}
-                      >
-                        {char.faction}
-                      </span>
-                      <h3 className="font-display text-sm font-bold text-foreground leading-tight">
-                        {char.name}
-                      </h3>
-                    </div>
-
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-primary flex items-center justify-center">
-                        <span className="text-xs font-bold text-background">✓</span>
-                      </div>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Selected character detail */}
-          {selected !== null && characters[selected] && (
-            <div className="max-w-2xl mx-auto px-6 mt-8 mb-6" style={{ animation: "fade-in-up 0.3s ease-out" }}>
-              <div className="gradient-card rounded-lg border border-primary/30 p-6">
-                <div className="flex items-start gap-4">
+            return (
+              <div key={i} className="group cursor-pointer" onClick={() => setSelected(i)}>
+                <div className={`relative aspect-[3/4] mb-3 transition-all duration-300 ${isSelected ? 'ring-1 ring-foreground p-1' : 'grayscale hover:grayscale-0'}`}>
                   <img
-                    src={CHARACTER_IMAGES[selected]}
-                    alt={characters[selected].name}
-                    className="w-20 h-20 rounded-lg object-cover border border-border"
+                    src={image}
+                    alt={char.name}
+                    className="w-full h-full object-cover bg-muted"
                   />
-                  <div className="flex-1">
-                    <span
-                      className={`text-xs font-display tracking-wider px-2 py-0.5 rounded-full ${getFactionBgColor(characters[selected].faction)} ${getFactionColor(characters[selected].faction)} mb-1 inline-block`}
-                    >
-                      {characters[selected].faction}
-                    </span>
-                    <h2 className="font-display text-xl font-bold text-foreground mb-2">
-                      {characters[selected].name}
-                    </h2>
-                    <p className="text-sm text-secondary-foreground italic leading-relaxed">
-                      {characters[selected].backstory}
-                    </p>
-                  </div>
+                  {isSelected && (
+                    <div className="absolute inset-0 bg-foreground/10" />
+                  )}
                 </div>
-
-                <button
-                  onClick={handleConfirm}
-                  className="mt-5 w-full py-3 rounded-lg font-display text-sm tracking-widest uppercase transition-all gradient-gold text-background font-bold hover:opacity-90 glow-gold"
-                >
-                  Claim This Identity
-                </button>
+                
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                      {char.faction}
+                    </span>
+                  </div>
+                  <h3 className={`font-display text-sm font-medium ${isSelected ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
+                    {char.name}
+                  </h3>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })}
+        </div>
+      )}
 
-          {/* Reroll */}
-          <div className="text-center pb-10 mt-4">
+      {/* Selection Drawer/Modal */}
+      {selected !== null && characters[selected] && (
+        <div className="fixed inset-x-0 bottom-0 z-50 p-6 pointer-events-none flex justify-center">
+          <div className="pointer-events-auto bg-background border border-border shadow-2xl max-w-2xl w-full p-6 md:p-8 animate-slide-up flex flex-col md:flex-row gap-6 md:items-center">
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center gap-3 mb-1">
+                <span className="font-display text-xl font-medium">{characters[selected].name}</span>
+                <span className="text-xs border border-border px-2 py-0.5 rounded-full text-muted-foreground uppercase tracking-wider">
+                  {characters[selected].faction}
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed font-serif italic">
+                "{characters[selected].backstory}"
+              </p>
+            </div>
+            
             <button
-              onClick={fetchCharacters}
-              className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors font-display tracking-wider"
+              onClick={handleConfirm}
+              className="whitespace-nowrap bg-foreground text-background px-8 py-3 text-xs font-medium uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
-              Ask the Chronicler for new souls
+              Confirm
+              <ArrowRight className="h-3 w-3" />
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
