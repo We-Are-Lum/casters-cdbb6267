@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      characters: {
+        Row: {
+          backstory: string
+          created_at: string
+          faction: string
+          fgld_balance: number
+          id: string
+          is_claimed: boolean
+          lum_balance: number
+          name: string
+          portrait_index: number
+          reputation_score: number
+          reputation_tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          backstory: string
+          created_at?: string
+          faction: string
+          fgld_balance?: number
+          id?: string
+          is_claimed?: boolean
+          lum_balance?: number
+          name: string
+          portrait_index?: number
+          reputation_score?: number
+          reputation_tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          backstory?: string
+          created_at?: string
+          faction?: string
+          fgld_balance?: number
+          id?: string
+          is_claimed?: boolean
+          lum_balance?: number
+          name?: string
+          portrait_index?: number
+          reputation_score?: number
+          reputation_tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
