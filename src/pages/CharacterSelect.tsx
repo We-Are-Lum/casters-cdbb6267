@@ -37,7 +37,7 @@ export default function CharacterSelect() {
         throw new Error(data.error || "Failed to summon characters");
       }
       const data = await resp.json();
-      setCharacters(data.characters?.slice(0, 20) || []);
+      setCharacters(data.characters?.slice(0, 30) || []);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
@@ -64,7 +64,7 @@ export default function CharacterSelect() {
           Choose Your Vessel
         </h1>
         <p className="text-sm text-secondary-foreground italic max-w-md mx-auto">
-          The Chronicler has drawn twenty souls from the ether. Each carries a name, a history, and a fate yet unwritten.
+          The Chronicler has drawn thirty souls from the ether. Each carries a name, a history, and a fate yet unwritten.
         </p>
       </div>
 

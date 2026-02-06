@@ -14,12 +14,12 @@ The world of Casters has four factions:
 - Azure Synod: Knowledge, ice, secrets. Controls the Pale Reach.
 - Obsidian Circle: Shadow, chaos, subterfuge. Controls the Underhallow.
 
-Generate exactly 20 unique character profiles. Each must have:
+Generate exactly 30 unique character profiles. Each must have:
 - A distinctive fantasy name (2-3 words, evocative and memorable)
 - A faction from the four above
 - A backstory (2-3 sentences, mythic tone, hints at their motivations and past)
 
-Distribute factions roughly evenly (5 per faction). Make each character feel distinct in personality and origin.`;
+Distribute factions roughly evenly. Make each character feel distinct in personality and origin.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -44,14 +44,14 @@ serve(async (req) => {
           model: "google/gemini-3-flash-preview",
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: "Generate the 20 character profiles now." },
+            { role: "user", content: "Generate the 30 character profiles now." },
           ],
           tools: [
             {
               type: "function",
               function: {
                 name: "create_character_profiles",
-                description: "Return 20 character profiles for new players.",
+                description: "Return 30 character profiles for new players.",
                 parameters: {
                   type: "object",
                   properties: {
