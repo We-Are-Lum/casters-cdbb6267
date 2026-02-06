@@ -26,6 +26,27 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Only accept POST
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method not allowed" }),
+      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Validate body is valid JSON (or empty)
+  try {
+    const text = await req.text();
+    if (text && text.trim()) {
+      JSON.parse(text); // just validate, we don't use the body
+    }
+  } catch {
+    return new Response(
+      JSON.stringify({ error: "Invalid request body" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");

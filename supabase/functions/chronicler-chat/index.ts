@@ -72,7 +72,32 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    const messages = body?.messages;
+
+    // Input validation
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > 50) {
+      return new Response(
+        JSON.stringify({ error: "Invalid messages: must be an array of 1-50 items." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    for (const msg of messages) {
+      if (
+        typeof msg !== "object" || msg === null ||
+        !["user", "assistant"].includes(msg.role) ||
+        typeof msg.content !== "string" ||
+        msg.content.length === 0 ||
+        msg.content.length > 5000
+      ) {
+        return new Response(
+          JSON.stringify({ error: "Invalid message: each must have role (user|assistant) and content (1-5000 chars)." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
