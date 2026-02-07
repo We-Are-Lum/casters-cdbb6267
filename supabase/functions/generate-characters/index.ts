@@ -8,25 +8,32 @@ const corsHeaders = {
 
 const SYSTEM_PROMPT = `You are The Chronicler, the mythic narrator of Casters. You are generating character profiles for new players entering the world.
 
+These are NOT heroes or combat classes. They are POSITIONS in the city — people with social roles, access, obligations, and blind spots.
+
 The world of Casters has four factions:
-- Verdant Concord: Nature, growth, unity. Controls the Green Reach.
-- Crimson Pact: Power, fire, sacrifice. Controls the Ashlands.
-- Azure Synod: Knowledge, ice, secrets. Controls the Pale Reach.
-- Obsidian Circle: Shadow, chaos, subterfuge. Controls the Underhallow.
+- Verdant Concord: Nature, growth, unity. Controls the Green Reach. Trusted by workers, distrusted by those who see patience as passivity.
+- Crimson Pact: Power, fire, sacrifice. Controls the Ashlands. Respected for directness, feared for ruthlessness.
+- Azure Synod: Knowledge, ice, secrets. Controls the Pale Reach. Admired for wisdom, resented for gatekeeping.
+- Obsidian Circle: Shadow, chaos, subterfuge. Controls the Underhallow. Effective operators, trusted by no one.
+
+CHARACTER ROLES (distribute across these — no two characters should share the same role):
+guild affiliates, messengers, apprentices, traders, caretakers, fixers, engineers, archivists, wardens, outsiders, diplomats, smugglers, healers, scribes, sentinels, brewers, couriers, scholars, miners, herbalists, artificers, navigators, debt collectors, chronicler-apprentices, advocates, quartermasters, interpreters, scouts, stewards, lamplighters
 
 Generate exactly 30 unique character profiles. Each must have:
-- A distinctive fantasy name (2-3 words, evocative and memorable)
-- A faction from the four above
-- A backstory (2-3 sentences, mythic tone, hints at their motivations and past)
+- name: A distinctive fantasy name (2-3 words, evocative)
+- faction: One of the four factions (distribute roughly evenly: 7-8 per faction)
+- role: Their social position in the city (from the list above, each unique)
+- backstory: 2-3 sentences in mythic tone, hinting at motivations, past, and what they want
+- strengths: A brief phrase describing their social advantages (e.g., "Access to guild ledgers", "Trusted by dock workers")  
+- weaknesses: A brief phrase describing their vulnerabilities (e.g., "Owes debts to the Circle", "Distrusted by the Synod elders")
 
-Distribute factions roughly evenly. Make each character feel distinct in personality and origin.`;
+Make each character feel distinct. Their strengths and weaknesses should create natural hooks for alliances, conflicts, and difficult choices.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Only accept POST
   if (req.method !== "POST") {
     return new Response(
       JSON.stringify({ error: "Method not allowed" }),
@@ -34,11 +41,10 @@ serve(async (req) => {
     );
   }
 
-  // Validate body is valid JSON (or empty)
   try {
     const text = await req.text();
     if (text && text.trim()) {
-      JSON.parse(text); // just validate, we don't use the body
+      JSON.parse(text);
     }
   } catch {
     return new Response(
@@ -51,7 +57,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    console.log("Generating character profiles...");
+    console.log("Generating character profiles with archetypes...");
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -65,7 +71,7 @@ serve(async (req) => {
           model: "google/gemini-3-flash-preview",
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: "Generate the 30 character profiles now." },
+            { role: "user", content: "Generate the 30 character profiles now. Each must have name, faction, role, backstory, strengths, and weaknesses." },
           ],
           tools: [
             {
@@ -83,9 +89,12 @@ serve(async (req) => {
                         properties: {
                           name: { type: "string", description: "Character name, 2-3 words" },
                           faction: { type: "string", enum: ["Verdant Concord", "Crimson Pact", "Azure Synod", "Obsidian Circle"] },
+                          role: { type: "string", description: "Social position in the city" },
                           backstory: { type: "string", description: "2-3 sentence backstory in mythic tone" },
+                          strengths: { type: "string", description: "Social advantages and access" },
+                          weaknesses: { type: "string", description: "Vulnerabilities and obligations" },
                         },
-                        required: ["name", "faction", "backstory"],
+                        required: ["name", "faction", "role", "backstory", "strengths", "weaknesses"],
                         additionalProperties: false,
                       },
                     },
@@ -122,7 +131,6 @@ serve(async (req) => {
 
     let parsed;
 
-    // Try tool_calls first (preferred)
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     if (toolCall?.function?.arguments) {
       try {
@@ -132,7 +140,6 @@ serve(async (req) => {
       }
     }
 
-    // Fallback: parse JSON from content
     if (!parsed) {
       const content = data.choices?.[0]?.message?.content || "";
       let cleaned = content.trim();

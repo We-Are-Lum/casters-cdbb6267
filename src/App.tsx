@@ -10,6 +10,8 @@ import CharacterSelect from "./pages/CharacterSelect";
 import Inventory from "./pages/Inventory";
 import World from "./pages/World";
 import Chat from "./pages/Chat";
+import Chronicle from "./pages/Chronicle";
+import HowToPlay from "./pages/HowToPlay";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/world" element={<World />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/chronicle" element={<Chronicle />} />
+            <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </GameProvider>

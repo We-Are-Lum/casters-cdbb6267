@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useGame } from "@/contexts/GameContext";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -7,6 +8,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chronicler-c
 export function useChroniclerChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { character } = useGame();
 
   const send = useCallback(async (input: string) => {
     const userMsg: Message = { role: "user", content: input };
@@ -29,6 +31,18 @@ export function useChroniclerChat() {
       });
     };
 
+    // Build character context for the Chronicler
+    const characterContext = character ? {
+      name: character.name,
+      faction: character.faction,
+      reputation: character.reputation,
+      reputationTags: character.reputationTags,
+      lum: character.lum,
+      fgld: character.fgld,
+      lootBagCount: character.lootBags.length,
+      backstory: character.backstory,
+    } : undefined;
+
     try {
       const resp = await fetch(CHAT_URL, {
         method: "POST",
@@ -36,7 +50,7 @@ export function useChroniclerChat() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, characterContext }),
       });
 
       if (!resp.ok || !resp.body) {
@@ -108,7 +122,7 @@ export function useChroniclerChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages]);
+  }, [messages, character]);
 
   const clearMessages = useCallback(() => setMessages([]), []);
 
