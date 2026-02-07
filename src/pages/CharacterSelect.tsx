@@ -9,6 +9,9 @@ interface CharacterProfile {
   name: string;
   faction: Faction;
   backstory: string;
+  role?: string;
+  strengths?: string;
+  weaknesses?: string;
 }
 
 const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-characters`;
@@ -141,6 +144,9 @@ export default function CharacterSelect() {
                   <h3 className={`font-display text-sm font-medium ${isSelected ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
                     {char.name}
                   </h3>
+                  {char.role && (
+                    <span className="text-[10px] text-muted-foreground/60 font-mono block">{char.role}</span>
+                  )}
                 </div>
               </div>
             );
@@ -159,9 +165,22 @@ export default function CharacterSelect() {
                   {characters[selected].faction}
                 </span>
               </div>
+              {characters[selected].role && (
+                <span className="text-xs text-muted-foreground font-mono">{characters[selected].role}</span>
+              )}
               <p className="text-sm text-muted-foreground leading-relaxed font-serif italic">
                 "{characters[selected].backstory}"
               </p>
+              {characters[selected].strengths && (
+                <p className="text-[10px] text-faction-verdant">
+                  ✦ {characters[selected].strengths}
+                </p>
+              )}
+              {characters[selected].weaknesses && (
+                <p className="text-[10px] text-faction-crimson">
+                  ⚠ {characters[selected].weaknesses}
+                </p>
+              )}
             </div>
             
             <button

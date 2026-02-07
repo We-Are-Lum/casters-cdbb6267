@@ -34,6 +34,13 @@ export default function Index() {
             Enter the Chronicle
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
+
+          <Link
+            to="/how-to-play"
+            className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors tracking-widest uppercase"
+          >
+            How the Game Works →
+          </Link>
           
           <p className="text-xs text-muted-foreground/60 max-w-xs mx-auto leading-relaxed">
             "The world remembers what you say in public."
