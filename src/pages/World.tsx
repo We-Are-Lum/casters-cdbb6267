@@ -1,19 +1,21 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, Globe, Users } from "lucide-react";
 import WorldStatus from "@/components/WorldStatus";
+import CharacterHeader from "@/components/CharacterHeader";
 import { FACTIONS, MOCK_REGIONS } from "@/lib/mockData";
 import { getFactionColor, getFactionBgColor } from "@/lib/mockData";
 
 export default function World() {
   return (
     <div className="min-h-screen bg-background">
+      <CharacterHeader />
       <main className="container py-8 max-w-3xl space-y-8">
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Chat
+          Back to Quest
         </Link>
 
         <div className="flex items-center gap-3">
