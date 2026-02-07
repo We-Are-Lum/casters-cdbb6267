@@ -28,7 +28,7 @@ export default function Index() {
 
         <div className="flex flex-col items-center gap-6">
           <Link
-            to="/choose"
+            to="/chat"
             className="group relative inline-flex items-center gap-3 px-8 py-4 text-sm font-medium tracking-widest uppercase text-foreground border border-foreground/20 hover:border-foreground transition-all duration-300 bg-background/50 backdrop-blur-sm"
           >
             Enter the Chronicle

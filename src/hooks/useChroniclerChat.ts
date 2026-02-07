@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import { useGame } from "@/contexts/GameContext";
+import type { RecommendedCharacter } from "@/components/CharacterRecommendation";
 
-type Message = { role: "user" | "assistant"; content: string };
+type Message = { role: "user" | "assistant"; content: string; characters?: RecommendedCharacter[] };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chronicler-chat`;
 
@@ -10,28 +11,15 @@ export function useChroniclerChat() {
   const [isLoading, setIsLoading] = useState(false);
   const { character } = useGame();
 
+  const isOnboarding = !character;
+
   const send = useCallback(async (input: string) => {
     const userMsg: Message = { role: "user", content: input };
     const history = [...messages, userMsg];
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
-    let assistantSoFar = "";
-
-    const upsertAssistant = (chunk: string) => {
-      assistantSoFar += chunk;
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant") {
-          return prev.map((m, i) =>
-            i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
-          );
-        }
-        return [...prev, { role: "assistant", content: assistantSoFar }];
-      });
-    };
-
-    // Build character context for the Chronicler
+    // Build character context for game mode
     const characterContext = character ? {
       name: character.name,
       faction: character.faction,
@@ -50,10 +38,14 @@ export function useChroniclerChat() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: history, characterContext }),
+        body: JSON.stringify({
+          messages: history.map(m => ({ role: m.role, content: m.content })),
+          characterContext,
+          mode: isOnboarding ? "onboarding" : "game",
+        }),
       });
 
-      if (!resp.ok || !resp.body) {
+      if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
         const errMsg = errData.error || "The Chronicler is silent.";
         setMessages((prev) => [
@@ -63,6 +55,44 @@ export function useChroniclerChat() {
         setIsLoading(false);
         return;
       }
+
+      if (isOnboarding) {
+        // Non-streaming response for onboarding
+        const data = await resp.json();
+        const assistantMsg: Message = {
+          role: "assistant",
+          content: data.content || "",
+          characters: data.characters || undefined,
+        };
+        setMessages((prev) => [...prev, assistantMsg]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Streaming for game mode
+      if (!resp.body) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "*The Chronicler is silent.*" },
+        ]);
+        setIsLoading(false);
+        return;
+      }
+
+      let assistantSoFar = "";
+
+      const upsertAssistant = (chunk: string) => {
+        assistantSoFar += chunk;
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last?.role === "assistant") {
+            return prev.map((m, i) =>
+              i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
+            );
+          }
+          return [...prev, { role: "assistant", content: assistantSoFar }];
+        });
+      };
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
@@ -122,9 +152,9 @@ export function useChroniclerChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, character]);
+  }, [messages, character, isOnboarding]);
 
   const clearMessages = useCallback(() => setMessages([]), []);
 
-  return { messages, isLoading, send, clearMessages };
+  return { messages, isLoading, send, clearMessages, isOnboarding };
 }

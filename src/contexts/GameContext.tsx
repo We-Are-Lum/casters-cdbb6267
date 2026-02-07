@@ -56,6 +56,7 @@ interface GameState {
   buyLootBag: (cost: number, token: "LUM" | "FGLD") => LootBag | null;
   getPortraitUrl: (index: number) => string;
   getFarcasterIntentUrl: (text: string, hashtag: string) => string;
+  selectCharacter: (char: { name: string; faction: Faction; backstory: string; role?: string; strengths?: string; weaknesses?: string; portraitIndex: number }) => Promise<string | null>;
 }
 
 const GameContext = createContext<GameState | null>(null);
@@ -270,6 +271,42 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return `https://warpcast.com/~/compose?text=${encodeURIComponent(fullText)}`;
   }, []);
 
+  const selectCharacter = useCallback(async (char: { name: string; faction: Faction; backstory: string; role?: string; strengths?: string; weaknesses?: string; portraitIndex: number }): Promise<string | null> => {
+    try {
+      const { data, error: insertError } = await supabase
+        .from("characters")
+        .insert({
+          name: char.name,
+          faction: char.faction,
+          backstory: char.backstory,
+          portrait_index: char.portraitIndex,
+          is_claimed: true,
+        })
+        .select("id")
+        .single();
+
+      if (insertError) throw insertError;
+
+      setCharacter({
+        id: data.id,
+        name: char.name,
+        faction: char.faction as Faction,
+        backstory: char.backstory,
+        portraitIndex: char.portraitIndex,
+        reputation: 50,
+        reputationTags: [],
+        lum: 100,
+        fgld: 50,
+        lootBags: [],
+      });
+
+      return data.id;
+    } catch (e) {
+      console.error("Failed to save character:", e);
+      return null;
+    }
+  }, []);
+
   return (
     <GameContext.Provider
       value={{
@@ -286,6 +323,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         buyLootBag,
         getPortraitUrl,
         getFarcasterIntentUrl,
+        selectCharacter,
       }}
     >
       {children}

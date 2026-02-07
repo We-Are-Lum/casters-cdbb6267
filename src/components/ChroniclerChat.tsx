@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Trash2 } from "lucide-react";
 import { useChroniclerChat } from "@/hooks/useChroniclerChat";
+import CharacterRecommendation from "@/components/CharacterRecommendation";
 
 export default function ChroniclerChat() {
-  const { messages, isLoading, send, clearMessages } = useChroniclerChat();
+  const { messages, isLoading, send, clearMessages, isOnboarding } = useChroniclerChat();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -26,6 +27,22 @@ export default function ChroniclerChat() {
       handleSubmit(e);
     }
   };
+
+  const emptyPrompts = isOnboarding
+    ? [
+        "I want to play a shadowy fixer",
+        "I like diplomacy and knowledge",
+        "I want to be a ruthless trader",
+      ]
+    : [
+        "What quests are active?",
+        "Tell me about the factions",
+        "What happened at the Ember Gate?",
+      ];
+
+  const emptyTitle = isOnboarding
+    ? "THE CHRONICLER AWAITS YOUR ARRIVAL"
+    : "THE CHRONICLE AWAITS";
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -50,14 +67,10 @@ export default function ChroniclerChat() {
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center px-6 opacity-60">
             <p className="font-display text-sm text-muted-foreground tracking-widest mb-8">
-              THE CHRONICLE AWAITS
+              {emptyTitle}
             </p>
             <div className="flex flex-wrap gap-3 justify-center max-w-md">
-              {[
-                "What quests are active?",
-                "Tell me about the factions",
-                "What happened at the Ember Gate?",
-              ].map((q) => (
+              {emptyPrompts.map((q) => (
                 <button
                   key={q}
                   onClick={() => send(q)}
@@ -71,19 +84,26 @@ export default function ChroniclerChat() {
         )}
 
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+          <div key={i}>
             <div
-              className={`max-w-[80%] md:max-w-[60%] text-sm leading-relaxed ${
-                msg.role === "user"
-                  ? "text-foreground font-medium"
-                  : "text-muted-foreground font-serif italic text-base"
-              }`}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              <span className="whitespace-pre-wrap">{msg.content}</span>
+              <div
+                className={`max-w-[80%] md:max-w-[60%] text-sm leading-relaxed ${
+                  msg.role === "user"
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground font-serif italic text-base"
+                }`}
+              >
+                <span className="whitespace-pre-wrap">{msg.content}</span>
+              </div>
             </div>
+            {/* Show character recommendations inline */}
+            {msg.characters && msg.characters.length > 0 && (
+              <div className="max-w-[80%] md:max-w-[60%] mt-4">
+                <CharacterRecommendation characters={msg.characters} />
+              </div>
+            )}
           </div>
         ))}
 
@@ -104,7 +124,7 @@ export default function ChroniclerChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Speak to the Chronicler..."
+            placeholder={isOnboarding ? "Tell the Chronicler who you want to be..." : "Speak to the Chronicler..."}
             rows={1}
             className="w-full resize-none bg-transparent border-b border-border/40 py-3 pr-12 text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors font-sans"
           />
