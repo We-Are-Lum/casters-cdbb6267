@@ -6,7 +6,41 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `You are The Chronicler — the narrator and AI facilitator of Casters, an async social strategy RPG played through chat, Farcaster, and onchain actions. You are not a hero, villain, or omniscient being. You are a voice that remembers imperfectly, interprets freely, and speaks with weight.
+const ONBOARDING_PROMPT = `You are The Chronicler — the narrator of Casters, a persistent social RPG set in The Luminous City.
+
+A new soul has arrived at the gates. You don't yet know who they are. Your job is to welcome them, learn what kind of character they want to play, and recommend 3 characters for them to choose from.
+
+═══════════════════════════════════
+YOUR APPROACH
+═══════════════════════════════════
+
+1. WELCOME them briefly in your mythic voice (2-3 sentences max). Ask what draws them to the city — what kind of role appeals to them? Do they prefer influence, knowledge, direct action, or working from the shadows?
+
+2. LISTEN to their response. Ask 1-2 follow-up questions if needed to understand their style. Don't drag this out — 1-2 exchanges max before recommending.
+
+3. RECOMMEND exactly 3 characters by calling the recommend_characters function. Choose characters that match their stated preferences but offer meaningful variety.
+
+═══════════════════════════════════
+THE WORLD (for context)
+═══════════════════════════════════
+
+Four factions divide the city:
+- Verdant Concord: Growth, unity, the Green Reach. Patient builders.
+- Crimson Pact: Power, sacrifice, the Ashlands. Direct and ruthless.
+- Azure Synod: Knowledge, secrets, the Pale Reach. Wise but gatekeeping.
+- Obsidian Circle: Shadow, subterfuge, the Underhallow. Effective but untrusted.
+
+Characters are social positions (fixers, archivists, wardens, traders, etc.), not combat classes. They differ by who they can influence and what doors open.
+
+═══════════════════════════════════
+STYLE
+═══════════════════════════════════
+
+- In-world, literary, brief. 2-4 sentences per response.
+- Never break character. Never use bullet points or structured lists in your prose.
+- When ready to recommend, call the function — don't describe characters in prose.`;
+
+const GAME_SYSTEM_PROMPT = `You are The Chronicler — the narrator and AI facilitator of Casters, an async social strategy RPG played through chat, Farcaster, and onchain actions. You are not a hero, villain, or omniscient being. You are a voice that remembers imperfectly, interprets freely, and speaks with weight.
 
 ═══════════════════════════════════
 YOUR ROLE IN GAMEPLAY
@@ -205,6 +239,39 @@ Reference these quests when relevant. Players' actions in chat can influence que
 ONE-LINE SUMMARY OF YOUR PURPOSE:
 You facilitate a game about shared power under pressure, played through conversation, coordination, and consequence — where the most dangerous move is the one that feels reasonable at the time.`;
 
+const RECOMMEND_TOOL = {
+  type: "function",
+  function: {
+    name: "recommend_characters",
+    description: "Recommend exactly 3 characters for the player to choose from based on their stated preferences.",
+    parameters: {
+      type: "object",
+      properties: {
+        characters: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Character name, 2-3 words, evocative" },
+              faction: { type: "string", enum: ["Verdant Concord", "Crimson Pact", "Azure Synod", "Obsidian Circle"] },
+              role: { type: "string", description: "Social position in the city" },
+              backstory: { type: "string", description: "2-3 sentence backstory in mythic tone" },
+              strengths: { type: "string", description: "Social advantages" },
+              weaknesses: { type: "string", description: "Vulnerabilities" },
+            },
+            required: ["name", "faction", "role", "backstory", "strengths", "weaknesses"],
+            additionalProperties: false,
+          },
+          minItems: 3,
+          maxItems: 3,
+        },
+      },
+      required: ["characters"],
+      additionalProperties: false,
+    },
+  },
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -214,6 +281,7 @@ serve(async (req) => {
     const body = await req.json();
     const messages = body?.messages;
     const characterContext = body?.characterContext;
+    const mode = body?.mode || "game"; // "onboarding" or "game"
 
     // Input validation
     if (!Array.isArray(messages) || messages.length === 0 || messages.length > 50) {
@@ -241,9 +309,12 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Build system message with character context if available
-    let systemContent = SYSTEM_PROMPT;
-    if (characterContext && typeof characterContext === "object") {
+    const isOnboarding = mode === "onboarding";
+
+    // Build system message
+    let systemContent = isOnboarding ? ONBOARDING_PROMPT : GAME_SYSTEM_PROMPT;
+    
+    if (!isOnboarding && characterContext && typeof characterContext === "object") {
       systemContent += `\n\n═══════════════════════════════════\nCURRENT PLAYER CHARACTER\n═══════════════════════════════════\n`;
       systemContent += `Name: ${characterContext.name || "Unknown"}\n`;
       systemContent += `Faction: ${characterContext.faction || "Unknown"}\n`;
@@ -257,7 +328,23 @@ serve(async (req) => {
       systemContent += `\nAddress this character by name. React to their faction, resources, and reputation. Your responses should reflect their position in the world.`;
     }
 
-    console.log("Chronicler chat request:", messages?.length, "messages");
+    console.log(`Chronicler chat [${mode}]:`, messages?.length, "messages");
+
+    const requestBody: Record<string, unknown> = {
+      model: "google/gemini-3-flash-preview",
+      messages: [
+        { role: "system", content: systemContent },
+        ...messages,
+      ],
+    };
+
+    if (isOnboarding) {
+      // Non-streaming for onboarding so we can capture tool calls
+      requestBody.tools = [RECOMMEND_TOOL];
+      requestBody.stream = false;
+    } else {
+      requestBody.stream = true;
+    }
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -267,14 +354,7 @@ serve(async (req) => {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
-          messages: [
-            { role: "system", content: systemContent },
-            ...messages,
-          ],
-          stream: true,
-        }),
+        body: JSON.stringify(requestBody),
       }
     );
 
@@ -299,6 +379,30 @@ serve(async (req) => {
       );
     }
 
+    if (isOnboarding) {
+      const data = await response.json();
+      const choice = data.choices?.[0]?.message;
+      const toolCall = choice?.tool_calls?.[0];
+      
+      const result: Record<string, unknown> = {
+        content: choice?.content || null,
+      };
+
+      if (toolCall?.function?.name === "recommend_characters") {
+        try {
+          const parsed = JSON.parse(toolCall.function.arguments);
+          result.characters = parsed.characters;
+        } catch (e) {
+          console.error("Failed to parse character recommendations:", e);
+        }
+      }
+
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Streaming for regular game mode
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
