@@ -310,9 +310,24 @@ serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const isOnboarding = mode === "onboarding";
+    const isSidebar = mode === "sidebar";
 
     // Build system message
     let systemContent = isOnboarding ? ONBOARDING_PROMPT : GAME_SYSTEM_PROMPT;
+
+    // For sidebar mode, append advisor framing
+    if (isSidebar) {
+      systemContent += `\n\n═══════════════════════════════════\nSIDEBAR ADVISOR MODE\n═══════════════════════════════════\n`;
+      systemContent += `You are speaking in a PRIVATE side conversation. This is NOT the main story.\n`;
+      systemContent += `In this mode:\n`;
+      systemContent += `- Answer questions about game mechanics, factions, lore, strategy, inventory, and the player's situation\n`;
+      systemContent += `- Give advice, explain systems, clarify what happened in the story\n`;
+      systemContent += `- Be helpful and direct — you can break from pure narrative voice to be more informative\n`;
+      systemContent += `- Do NOT advance the main story or create new narrative events\n`;
+      systemContent += `- Do NOT introduce new characters, quests, or world changes\n`;
+      systemContent += `- Keep responses concise (1-3 sentences) since this is a small side panel\n`;
+      systemContent += `- You may reference the player's current state, inventory, tokens, and reputation\n`;
+    }
     
     if (!isOnboarding && characterContext && typeof characterContext === "object") {
       systemContent += `\n\n═══════════════════════════════════\nCURRENT PLAYER CHARACTER\n═══════════════════════════════════\n`;
