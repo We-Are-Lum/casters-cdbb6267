@@ -22,7 +22,7 @@ export default function Index() {
             CASTERS
           </h1>
           <p className="text-xl text-muted-foreground font-light tracking-wide">
-            Speak to the Chronicler. Shape the story.
+            Speak to Aelia. Shape the story.
           </p>
         </div>
 
@@ -31,7 +31,7 @@ export default function Index() {
             to="/chat"
             className="group relative inline-flex items-center gap-3 px-8 py-4 text-sm font-medium tracking-widest uppercase text-foreground border border-foreground/20 hover:border-foreground transition-all duration-300 bg-background/50 backdrop-blur-sm"
           >
-            Enter the Chronicle
+            Speak to Aelia
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
 
