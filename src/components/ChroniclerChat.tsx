@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Trash2 } from "lucide-react";
 import { useChroniclerChat } from "@/hooks/useChroniclerChat";
 import CharacterRecommendation from "@/components/CharacterRecommendation";
+import StoryStampPrompt from "@/components/StoryStampPrompt";
 
 export default function ChroniclerChat() {
   const { messages, isLoading, send, clearMessages, isOnboarding } = useChroniclerChat();
@@ -113,6 +114,12 @@ export default function ChroniclerChat() {
               WRITING...
             </span>
           </div>
+        )}
+
+        {/* Story stamp prompt — appears every 10 assistant messages */}
+        {!isOnboarding && !isLoading && messages.filter(m => m.role === "assistant").length > 0 &&
+          messages.filter(m => m.role === "assistant").length % 10 === 0 && (
+          <StoryStampPrompt storyTitle="Current Session" />
         )}
       </div>
 
