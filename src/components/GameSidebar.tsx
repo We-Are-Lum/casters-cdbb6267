@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, X, Coins, ShoppingBag, Menu, MessageCircle } from "lucide-react";
+import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, X, Coins, ShoppingBag, Menu, MessageCircle, Sparkles, Stamp, Info } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGame } from "@/contexts/GameContext";
@@ -10,6 +10,9 @@ import StakeDialog from "@/components/StakeDialog";
 import LootShop from "@/components/LootShop";
 import FarcasterCompose from "@/components/FarcasterCompose";
 import SidebarChat from "@/components/SidebarChat";
+import MintCharacterDialog from "@/components/MintCharacterDialog";
+import OnchainStampDialog from "@/components/OnchainStampDialog";
+import CharacterInfoSheet from "@/components/CharacterInfoSheet";
 
 type Tab = "aelia" | "character" | "inventory" | "transact" | "cast";
 
@@ -22,6 +25,9 @@ export default function GameSidebar() {
   const [stakeOpen, setStakeOpen] = useState(false);
   const [lootOpen, setLootOpen] = useState(false);
   const [castOpen, setCastOpen] = useState(false);
+  const [mintOpen, setMintOpen] = useState(false);
+  const [stampOpen, setStampOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const tabs: { id: Tab; label: string; icon: typeof User }[] = [
     { id: "aelia", label: "Aelia", icon: MessageCircle },
@@ -193,13 +199,65 @@ export default function GameSidebar() {
                   "{character.backstory}"
                 </p>
               </div>
+
+              {/* Onchain actions */}
+              <div className="space-y-2 border-t border-border/40 pt-4">
+                <span className="text-[10px] font-display tracking-widest text-muted-foreground uppercase">Onchain</span>
+                <button
+                  onClick={() => setMintOpen(true)}
+                  className="w-full flex items-center gap-3 p-3 border border-border hover:border-foreground/30 transition-all text-left"
+                >
+                  <Sparkles className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <span className="text-xs font-display text-foreground block">Mint Character</span>
+                    <span className="text-[10px] text-muted-foreground">Save permanently as NFT on Base</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setStampOpen(true)}
+                  className="w-full flex items-center gap-3 p-3 border border-border hover:border-foreground/30 transition-all text-left"
+                >
+                  <Stamp className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <span className="text-xs font-display text-foreground block">Stamp State</span>
+                    <span className="text-[10px] text-muted-foreground">Snapshot current state onchain</span>
+                  </div>
+                </button>
+              </div>
+
+              {/* Info link */}
+              <button
+                onClick={() => setInfoOpen(true)}
+                className="flex items-center gap-1.5 text-[10px] text-muted-foreground/60 hover:text-foreground transition-colors"
+              >
+                <Info className="h-3 w-3" />
+                How characters work
+              </button>
             </div>
           )}
 
           {tab === "character" && !character && (
-            <p className="text-xs text-muted-foreground italic text-center py-8">
-              Chat with Aelia to choose your character.
-            </p>
+            <div className="space-y-6 py-4">
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 rounded-full border-2 border-dashed border-border/60 mx-auto flex items-center justify-center">
+                  <User className="h-6 w-6 text-muted-foreground/40" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  No character yet. Speak to Aelia in the main story to discover who you are.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setInfoOpen(true)}
+                className="w-full flex items-center gap-3 p-3 border border-border hover:border-foreground/30 transition-all text-left"
+              >
+                <Info className="h-4 w-4 text-muted-foreground shrink-0" />
+                <div>
+                  <span className="text-xs font-display text-foreground block">How Characters Work</span>
+                  <span className="text-[10px] text-muted-foreground">Minting, stamping, and lore eligibility</span>
+                </div>
+              </button>
+            </div>
           )}
 
           {tab === "inventory" && (
@@ -290,6 +348,9 @@ export default function GameSidebar() {
           questTitle={activeQuest.title}
         />
       )}
+      <MintCharacterDialog open={mintOpen} onClose={() => setMintOpen(false)} />
+      <OnchainStampDialog open={stampOpen} onClose={() => setStampOpen(false)} type="character" />
+      <CharacterInfoSheet open={infoOpen} onClose={() => setInfoOpen(false)} />
     </>
   );
 }
