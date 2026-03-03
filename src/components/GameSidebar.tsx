@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, X, Coins, ShoppingBag, Menu } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGame } from "@/contexts/GameContext";
 import { getFactionColor, getFactionBgColor, MOCK_CHARACTER } from "@/lib/mockData";
@@ -87,13 +88,16 @@ export default function GameSidebar() {
               No Character
             </span>
           )}
-          <button
-            onClick={() => setOpen(false)}
-            className="text-muted-foreground hover:text-foreground transition-colors shrink-0 ml-2 p-1"
-            aria-label="Close sidebar"
-          >
-            {isMobile ? <X className="h-5 w-5" /> : <ChevronRight className="h-4 w-4" />}
-          </button>
+          <div className="flex items-center shrink-0 ml-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setOpen(false)}
+              className="text-muted-foreground hover:text-foreground transition-colors p-1"
+              aria-label="Close sidebar"
+            >
+              {isMobile ? <X className="h-5 w-5" /> : <ChevronRight className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
 
         {/* Back to story button — mobile only */}
