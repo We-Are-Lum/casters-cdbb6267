@@ -124,7 +124,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_001",
         order: 1,
-        prompt: "The Chronicler speaks: \"The Ember Gate groans. Its keepers have fallen silent. Who among you will declare your intent — to seal or to shatter? Post your allegiance on Farcaster. The world is watching. Those who stake $LUM amplify their voice. Those who stay silent will be remembered for that too.\"",
+        prompt: "Aelia speaks: \"The Ember Gate groans. Its keepers have fallen silent. Who among you will declare your intent — to seal or to shatter? Post your allegiance on Farcaster. The world is watching. Those who stake $LUM amplify their voice. Those who stay silent will be remembered for that too.\"",
         requiredHashtag: "#EmberGateRises",
         optionalActions: [
           "Stake $LUM to amplify your faction's voice",
@@ -137,7 +137,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_002",
         order: 2,
-        prompt: "The Chronicler speaks: \"The first cracks widen. Factions have spoken, but words alone cannot hold the gate. Rally your allies — or turn on them. Those who staked heavily in Challenge 1 now hold leverage. But leverage invites scrutiny.\"",
+        prompt: "Aelia speaks: \"The first cracks widen. Factions have spoken, but words alone cannot hold the gate. Rally your allies — or turn on them. Those who staked heavily in Challenge 1 now hold leverage. But leverage invites scrutiny.\"",
         requiredHashtag: "#EmberGateHolds",
         optionalActions: [
           "Spend $FGLD to fund reinforcements (visible to all)",
@@ -162,7 +162,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_003",
         order: 1,
-        prompt: "The Chronicler speaks: \"A cipher has surfaced from the deep Archive. Those who solve it may unlock a truth long buried. But beware — some truths bite back. The Obsidian Circle has already placed agents. Will you outspend them, outthink them, or join them?\"",
+        prompt: "Aelia speaks: \"A cipher has surfaced from the deep Archive. Those who solve it may unlock a truth long buried. But beware — some truths bite back. The Obsidian Circle has already placed agents. Will you outspend them, outthink them, or join them?\"",
         requiredHashtag: "#StarwhisperRises",
         optionalActions: [
           "Stake $LUM to access the cipher (commitment visible to rivals)",
@@ -176,7 +176,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_004",
         order: 2,
-        prompt: "The Chronicler speaks: \"The cipher cracked — but at a cost. Three Synod members broke ranks to share fragments with the Obsidian Circle. The name 'Valdris' now echoes through every channel. Whoever surfaces it first on Farcaster shapes the narrative. $FGLD can buy silence or amplification.\"",
+        prompt: "Aelia speaks: \"The cipher cracked — but at a cost. Three Synod members broke ranks to share fragments with the Obsidian Circle. The name 'Valdris' now echoes through every channel. Whoever surfaces it first on Farcaster shapes the narrative. $FGLD can buy silence or amplification.\"",
         requiredHashtag: "#WhoIsValdris",
         optionalActions: [
           "Spend $FGLD to bribe an informant (reveals hidden quest data)",
@@ -201,7 +201,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_005",
         order: 1,
-        prompt: "The Chronicler speaks: \"A staff in Merchant Calloway's bag has begun to glow. She is no fool — she will sell to whoever offers the most convincing combination of coin, protection, and public endorsement. Post your bid on Farcaster. Pool $FGLD with allies if you dare. But remember: the glow fades at sunset.\"",
+        prompt: "Aelia speaks: \"A staff in Merchant Calloway's bag has begun to glow. She is no fool — she will sell to whoever offers the most convincing combination of coin, protection, and public endorsement. Post your bid on Farcaster. Pool $FGLD with allies if you dare. But remember: the glow fades at sunset.\"",
         requiredHashtag: "#LuminousBargain",
         optionalActions: [
           "Pool $FGLD with allies to make a joint bid (visible alliance)",
@@ -215,7 +215,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_006",
         order: 2,
-        prompt: "The Chronicler speaks: \"The bids are in. But the merchant hesitates. She's heard rumors — that the buyer intends to hoard, not share. She wants a public promise. Someone must stake their reputation. Who will speak first?\"",
+        prompt: "Aelia speaks: \"The bids are in. But the merchant hesitates. She's heard rumors — that the buyer intends to hoard, not share. She wants a public promise. Someone must stake their reputation. Who will speak first?\"",
         requiredHashtag: "#CallowayDecides",
         optionalActions: [
           "Stake $LUM as a public promise (binds your reputation)",
@@ -240,7 +240,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_007",
         order: 1,
-        prompt: "The Chronicler speaks: \"Theron's silence is three days old now. The Verdant Concord is rattled. The Obsidian Circle claims to know his location — but they want $FGLD, and they want it publicly. Do you pay the ransom in the open, or try to find him yourself? Every hour of delay is an hour the trail goes cold.\"",
+        prompt: "Aelia speaks: \"Theron's silence is three days old now. The Verdant Concord is rattled. The Obsidian Circle claims to know his location — but they want $FGLD, and they want it publicly. Do you pay the ransom in the open, or try to find him yourself? Every hour of delay is an hour the trail goes cold.\"",
         requiredHashtag: "#WardensWatch",
         optionalActions: [
           "Send $FGLD to the Obsidian Circle contact (visible transaction)",
@@ -254,7 +254,7 @@ export const MOCK_QUESTS: Quest[] = [
       {
         id: "ch_008",
         order: 2,
-        prompt: "The Chronicler speaks: \"A fragment of Theron's journal surfaces. It mentions 'the temptation of keeping the bag.' Moloch whispers. Was Theron protecting the city, or protecting himself? The evidence is ambiguous. Your interpretation — posted publicly — will shape what the city believes happened.\"",
+        prompt: "Aelia speaks: \"A fragment of Theron's journal surfaces. It mentions 'the temptation of keeping the bag.' Moloch whispers. Was Theron protecting the city, or protecting himself? The evidence is ambiguous. Your interpretation — posted publicly — will shape what the city believes happened.\"",
         requiredHashtag: "#TheronsTruth",
         optionalActions: [
           "Post your interpretation on Farcaster (shapes the official narrative)",

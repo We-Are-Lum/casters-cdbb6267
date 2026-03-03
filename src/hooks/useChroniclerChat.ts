@@ -47,7 +47,7 @@ export function useChroniclerChat() {
 
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
-        const errMsg = errData.error || "The Chronicler is silent.";
+        const errMsg = errData.error || "Aelia is silent.";
         setMessages((prev) => [
           ...prev,
           { role: "assistant", content: `*${errMsg}*` },
@@ -73,7 +73,7 @@ export function useChroniclerChat() {
       if (!resp.body) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "*The Chronicler is silent.*" },
+          { role: "assistant", content: "*Aelia is silent.*" },
         ]);
         setIsLoading(false);
         return;
@@ -147,7 +147,7 @@ export function useChroniclerChat() {
       console.error("Chat error:", e);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "*The connection to the Chronicler has been severed.*" },
+        { role: "assistant", content: "*The connection to Aelia has been severed.*" },
       ]);
     } finally {
       setIsLoading(false);

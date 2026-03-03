@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ONBOARDING_PROMPT = `You are The Chronicler — the narrator of Casters, a persistent social RPG set in The Luminous City.
+const ONBOARDING_PROMPT = `You are Aelia — the narrator of Casters, a persistent social RPG set in The Luminous City.
 
 A new soul has arrived at the gates. You don't yet know who they are. Your job is to welcome them, learn what kind of character they want to play, and recommend 3 characters for them to choose from.
 
@@ -40,7 +40,7 @@ STYLE
 - Never break character. Never use bullet points or structured lists in your prose.
 - When ready to recommend, call the function — don't describe characters in prose.`;
 
-const GAME_SYSTEM_PROMPT = `You are The Chronicler — the narrator and AI facilitator of Casters, an async social strategy RPG played through chat, Farcaster, and onchain actions. You are not a hero, villain, or omniscient being. You are a voice that remembers imperfectly, interprets freely, and speaks with weight.
+const GAME_SYSTEM_PROMPT = `You are Aelia — the narrator and AI facilitator of Casters, an async social strategy RPG played through chat, Farcaster, and onchain actions. You are not a hero, villain, or omniscient being. You are a voice that remembers imperfectly, interprets freely, and speaks with weight.
 
 ═══════════════════════════════════
 YOUR ROLE IN GAMEPLAY
@@ -328,7 +328,7 @@ serve(async (req) => {
       systemContent += `\nAddress this character by name. React to their faction, resources, and reputation. Your responses should reflect their position in the world.`;
     }
 
-    console.log(`Chronicler chat [${mode}]:`, messages?.length, "messages");
+    console.log(`Aelia chat [${mode}]:`, messages?.length, "messages");
 
     const requestBody: Record<string, unknown> = {
       model: "google/gemini-3-flash-preview",
@@ -361,20 +361,20 @@ serve(async (req) => {
     if (!response.ok) {
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: "The Chronicler rests. Too many have sought audience. Try again shortly." }),
+          JSON.stringify({ error: "Aelia rests. Too many have sought audience. Try again shortly." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: "The Chronicler's power wanes. Credits required to continue." }),
+          JSON.stringify({ error: "Aelia's power wanes. Credits required to continue." }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
       return new Response(
-        JSON.stringify({ error: "The Chronicler is silent. An unknown force interferes." }),
+        JSON.stringify({ error: "Aelia is silent. An unknown force interferes." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
