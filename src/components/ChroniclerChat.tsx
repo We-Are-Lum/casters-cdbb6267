@@ -41,15 +41,15 @@ export default function ChroniclerChat() {
       ];
 
   const emptyTitle = isOnboarding
-    ? "THE CHRONICLER AWAITS YOUR ARRIVAL"
-    : "THE CHRONICLE AWAITS";
+    ? "AELIA AWAITS YOUR ARRIVAL"
+    : "AELIA AWAITS";
 
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Minimal Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
         <span className="font-display text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
-          The Chronicler
+          Aelia
         </span>
         {messages.length > 0 && (
           <button
@@ -124,7 +124,7 @@ export default function ChroniclerChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isOnboarding ? "Tell the Chronicler who you want to be..." : "Speak to the Chronicler..."}
+            placeholder={isOnboarding ? "Tell Aelia who you want to be..." : "Speak to Aelia..."}
             rows={1}
             className="w-full resize-none bg-transparent border-b border-border/40 py-3 pr-12 text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors font-sans"
           />

@@ -167,7 +167,7 @@ export default function GameSidebar() {
 
           {tab === "character" && !character && (
             <p className="text-xs text-muted-foreground italic text-center py-8">
-              Chat with the Chronicler to choose your character.
+              Chat with Aelia to choose your character.
             </p>
           )}
 
@@ -216,7 +216,7 @@ export default function GameSidebar() {
           {tab === "cast" && (
             <div className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                Draft and post to Farcaster. Your casts with quest hashtags are tracked by the Chronicler.
+                Draft and post to Farcaster. Your casts with quest hashtags are tracked by Aelia.
               </p>
               {activeQuest ? (
                 <button
