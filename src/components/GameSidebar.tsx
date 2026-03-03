@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, X, Coins, ShoppingBag, Menu } from "lucide-react";
+import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, X, Coins, ShoppingBag, Menu, MessageCircle } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGame } from "@/contexts/GameContext";
@@ -9,20 +9,22 @@ import TradeDialog from "@/components/TradeDialog";
 import StakeDialog from "@/components/StakeDialog";
 import LootShop from "@/components/LootShop";
 import FarcasterCompose from "@/components/FarcasterCompose";
+import SidebarChat from "@/components/SidebarChat";
 
-type Tab = "character" | "inventory" | "transact" | "cast";
+type Tab = "aelia" | "character" | "inventory" | "transact" | "cast";
 
 export default function GameSidebar() {
   const { character, getPortraitUrl, activeQuest } = useGame();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<Tab>("character");
+  const [tab, setTab] = useState<Tab>("aelia");
   const [tradeOpen, setTradeOpen] = useState(false);
   const [stakeOpen, setStakeOpen] = useState(false);
   const [lootOpen, setLootOpen] = useState(false);
   const [castOpen, setCastOpen] = useState(false);
 
   const tabs: { id: Tab; label: string; icon: typeof User }[] = [
+    { id: "aelia", label: "Aelia", icon: MessageCircle },
     { id: "character", label: "Character", icon: User },
     { id: "inventory", label: "Items", icon: Package },
     { id: "transact", label: "Transact", icon: ArrowRightLeft },
@@ -139,7 +141,11 @@ export default function GameSidebar() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className={`flex-1 overflow-y-auto p-4 ${tab === "aelia" ? "" : "space-y-4"}`}>
+          {tab === "aelia" && (
+            <SidebarChat />
+          )}
+
           {tab === "character" && character && (
             <div className="space-y-5">
               {/* Portrait + info */}
