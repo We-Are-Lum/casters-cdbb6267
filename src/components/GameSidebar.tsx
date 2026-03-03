@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, Coins, ShoppingBag } from "lucide-react";
+import { User, Package, ArrowRightLeft, ExternalLink, ChevronLeft, ChevronRight, X, Coins, ShoppingBag, Menu } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useGame } from "@/contexts/GameContext";
 import { getFactionColor, getFactionBgColor, MOCK_CHARACTER } from "@/lib/mockData";
 import InventoryPanel from "@/components/InventoryPanel";
@@ -12,7 +13,8 @@ type Tab = "character" | "inventory" | "transact" | "cast";
 
 export default function GameSidebar() {
   const { character, getPortraitUrl, activeQuest } = useGame();
-  const [open, setOpen] = useState(true);
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<Tab>("character");
   const [tradeOpen, setTradeOpen] = useState(false);
   const [stakeOpen, setStakeOpen] = useState(false);
@@ -43,20 +45,27 @@ export default function GameSidebar() {
 
   return (
     <>
-      {/* Collapsed toggle */}
+      {/* Floating toggle button — always visible when closed */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-background border border-border border-r-0 p-2.5 text-muted-foreground hover:text-foreground transition-colors"
+          className="fixed right-4 top-4 z-40 bg-background border border-border p-2.5 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Open sidebar"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <Menu className="h-4 w-4" />
         </button>
       )}
 
-      {/* Sidebar panel */}
+      {/* Mobile: full-screen overlay / Desktop: side panel */}
+      {open && isMobile && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" onClick={() => setOpen(false)} />
+      )}
+
       <div
-        className={`h-full border-l border-border bg-background flex flex-col transition-all duration-300 ease-in-out ${
-          open ? "w-80 lg:w-96" : "w-0 overflow-hidden"
+        className={`${
+          isMobile
+            ? `fixed inset-0 z-50 bg-background flex flex-col transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"}`
+            : `h-full border-l border-border bg-background flex flex-col transition-all duration-300 ease-in-out ${open ? "w-80 lg:w-96" : "w-0 overflow-hidden"}`
         }`}
       >
         {/* Header */}
@@ -80,11 +89,23 @@ export default function GameSidebar() {
           )}
           <button
             onClick={() => setOpen(false)}
-            className="text-muted-foreground hover:text-foreground transition-colors shrink-0 ml-2"
+            className="text-muted-foreground hover:text-foreground transition-colors shrink-0 ml-2 p-1"
+            aria-label="Close sidebar"
           >
-            <ChevronRight className="h-4 w-4" />
+            {isMobile ? <X className="h-5 w-5" /> : <ChevronRight className="h-4 w-4" />}
           </button>
         </div>
+
+        {/* Back to story button — mobile only */}
+        {isMobile && (
+          <button
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-4 py-2.5 text-xs font-display tracking-widest uppercase text-muted-foreground hover:text-foreground border-b border-border/40 transition-colors"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+            Back to Story
+          </button>
+        )}
 
         {/* Balances bar */}
         {character && (
