@@ -132,10 +132,10 @@ export default function SidebarChat() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pb-2">
         {messages.length === 0 && (
           <div className="flex flex-col items-center text-center py-8 opacity-60">
-            <p className="font-display text-[10px] tracking-widest text-muted-foreground uppercase mb-4">
+            <p className="font-display text-xs md:text-[10px] tracking-widest text-muted-foreground uppercase mb-4">
               Ask Aelia
             </p>
-            <p className="text-xs text-muted-foreground mb-4 px-2">
+            <p className="text-sm md:text-xs text-muted-foreground mb-4 px-2">
               Side conversations stay here — Aelia won't bring these into the main story.
             </p>
             <div className="flex flex-col gap-2 w-full">
@@ -143,7 +143,7 @@ export default function SidebarChat() {
                 <button
                   key={q}
                   onClick={() => send(q)}
-                  className="text-[11px] px-3 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all text-left"
+                  className="text-sm md:text-[11px] px-3 py-2.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all text-left"
                 >
                   {q}
                 </button>
@@ -155,7 +155,7 @@ export default function SidebarChat() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
-              className={`max-w-[90%] text-xs leading-relaxed ${
+              className={`max-w-[90%] text-sm md:text-xs leading-relaxed ${
                 msg.role === "user"
                   ? "text-foreground font-medium"
                   : "text-muted-foreground font-serif italic"
@@ -190,7 +190,7 @@ export default function SidebarChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask Aelia..."
-            className="w-full bg-transparent border-b border-border/40 py-2 pr-8 text-xs text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors"
+            className="w-full bg-transparent border-b border-border/40 py-2 pr-8 text-base md:text-xs text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors"
           />
           <button
             type="submit"
