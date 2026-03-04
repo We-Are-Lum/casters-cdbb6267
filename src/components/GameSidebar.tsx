@@ -86,8 +86,8 @@ export default function GameSidebar() {
                 alt={character.name}
                 className="w-6 h-6 rounded-full object-cover border border-border shrink-0"
               />
-              <span className="text-xs font-display text-foreground truncate">{character.name}</span>
-              <span className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 shrink-0 ${getFactionBgColor(character.faction)} ${getFactionColor(character.faction)}`}>
+              <span className="text-sm md:text-xs font-display text-foreground truncate">{character.name}</span>
+              <span className={`text-[10px] md:text-[9px] uppercase tracking-wider px-1.5 py-0.5 shrink-0 ${getFactionBgColor(character.faction)} ${getFactionColor(character.faction)}`}>
                 {character.faction}
               </span>
             </div>
@@ -121,7 +121,7 @@ export default function GameSidebar() {
 
         {/* Balances bar */}
         {character && (
-          <div className="flex items-center justify-center gap-4 px-4 py-2 border-b border-border/40 text-xs font-mono shrink-0">
+          <div className="flex items-center justify-center gap-4 px-4 py-2 border-b border-border/40 text-sm md:text-xs font-mono shrink-0">
             <span className="text-foreground">{character.lum} <span className="text-muted-foreground">LUM</span></span>
             <span className="text-muted-foreground/30">·</span>
             <span className="text-foreground">{character.fgld} <span className="text-muted-foreground">FGLD</span></span>
@@ -141,7 +141,7 @@ export default function GameSidebar() {
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
-              <span className="text-[9px] tracking-widest uppercase">{label}</span>
+              <span className="text-[11px] md:text-[9px] tracking-widest uppercase">{label}</span>
             </button>
           ))}
         </div>
@@ -209,8 +209,8 @@ export default function GameSidebar() {
                 >
                   <Sparkles className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
-                    <span className="text-xs font-display text-foreground block">Mint Character</span>
-                    <span className="text-[10px] text-muted-foreground">Save permanently as NFT on Base</span>
+                    <span className="text-sm md:text-xs font-display text-foreground block">Mint Character</span>
+                    <span className="text-xs md:text-[10px] text-muted-foreground">Save permanently as NFT on Base</span>
                   </div>
                 </button>
                 <button
@@ -219,8 +219,8 @@ export default function GameSidebar() {
                 >
                   <Stamp className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
-                    <span className="text-xs font-display text-foreground block">Stamp State</span>
-                    <span className="text-[10px] text-muted-foreground">Snapshot current state onchain</span>
+                    <span className="text-sm md:text-xs font-display text-foreground block">Stamp State</span>
+                    <span className="text-xs md:text-[10px] text-muted-foreground">Snapshot current state onchain</span>
                   </div>
                 </button>
               </div>
@@ -242,7 +242,7 @@ export default function GameSidebar() {
                 <div className="w-16 h-16 rounded-full border-2 border-dashed border-border/60 mx-auto flex items-center justify-center">
                   <User className="h-6 w-6 text-muted-foreground/40" />
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm md:text-xs text-muted-foreground">
                   No character yet. Speak to Aelia in the main story to discover who you are.
                 </p>
               </div>

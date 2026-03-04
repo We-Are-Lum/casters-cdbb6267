@@ -67,7 +67,7 @@ export default function ChroniclerChat() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-8 space-y-8">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center px-6 opacity-60">
-            <p className="font-display text-sm text-muted-foreground tracking-widest mb-8">
+            <p className="font-display text-base md:text-sm text-muted-foreground tracking-widest mb-8">
               {emptyTitle}
             </p>
             <div className="flex flex-wrap gap-3 justify-center max-w-md">
@@ -75,7 +75,7 @@ export default function ChroniclerChat() {
                 <button
                   key={q}
                   onClick={() => send(q)}
-                  className="text-xs px-4 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all duration-300 bg-background"
+                  className="text-sm md:text-xs px-4 py-2.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all duration-300 bg-background"
                 >
                   {q}
                 </button>
@@ -90,10 +90,10 @@ export default function ChroniclerChat() {
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] md:max-w-[60%] text-sm leading-relaxed ${
+                className={`max-w-[85%] md:max-w-[65%] leading-relaxed ${
                   msg.role === "user"
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground font-serif italic text-base"
+                    ? "text-base md:text-sm text-foreground font-medium"
+                    : "text-base md:text-[15px] text-muted-foreground font-serif italic"
                 }`}
               >
                 <span className="whitespace-pre-wrap">{msg.content}</span>
@@ -133,7 +133,7 @@ export default function ChroniclerChat() {
             onKeyDown={handleKeyDown}
             placeholder={isOnboarding ? "Tell Aelia who you want to be..." : "Speak to Aelia..."}
             rows={1}
-            className="w-full resize-none bg-transparent border-b border-border/40 py-3 pr-12 text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors font-sans"
+            className="w-full resize-none bg-transparent border-b border-border/40 py-3 pr-12 text-lg md:text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 transition-colors font-sans"
           />
           <button
             type="submit"
