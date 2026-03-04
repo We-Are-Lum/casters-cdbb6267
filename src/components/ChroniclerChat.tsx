@@ -50,7 +50,7 @@ export default function ChroniclerChat() {
       {/* Minimal Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
         <span className="font-display text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
-          Aelia
+          Casters
         </span>
         {messages.length > 0 && (
           <button
@@ -67,7 +67,7 @@ export default function ChroniclerChat() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-8 space-y-8">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center px-6 opacity-60">
-            <p className="font-display text-base md:text-sm text-muted-foreground tracking-widest mb-8">
+            <p className="font-display text-lg md:text-base text-muted-foreground tracking-widest mb-8">
               {emptyTitle}
             </p>
             <div className="flex flex-wrap gap-3 justify-center max-w-md">
@@ -75,7 +75,7 @@ export default function ChroniclerChat() {
                 <button
                   key={q}
                   onClick={() => send(q)}
-                  className="text-sm md:text-xs px-4 py-2.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all duration-300 bg-background"
+                  className="text-base md:text-sm px-5 py-3 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all duration-300 bg-background"
                 >
                   {q}
                 </button>

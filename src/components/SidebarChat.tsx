@@ -132,10 +132,10 @@ export default function SidebarChat() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pb-2">
         {messages.length === 0 && (
           <div className="flex flex-col items-center text-center py-8 opacity-60">
-            <p className="font-display text-xs md:text-[10px] tracking-widest text-muted-foreground uppercase mb-4">
+            <p className="font-display text-sm md:text-xs tracking-widest text-muted-foreground uppercase mb-4">
               Ask Aelia
             </p>
-            <p className="text-sm md:text-xs text-muted-foreground mb-4 px-2">
+            <p className="text-base md:text-sm text-muted-foreground mb-4 px-2">
               Side conversations stay here — Aelia won't bring these into the main story.
             </p>
             <div className="flex flex-col gap-2 w-full">
@@ -143,7 +143,7 @@ export default function SidebarChat() {
                 <button
                   key={q}
                   onClick={() => send(q)}
-                  className="text-sm md:text-[11px] px-3 py-2.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all text-left"
+                  className="text-base md:text-sm px-3 py-3 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all text-left"
                 >
                   {q}
                 </button>
